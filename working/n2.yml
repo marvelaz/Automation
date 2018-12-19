@@ -1,0 +1,29 @@
+---
+- hosts: iosxe
+  gather_facts: no
+  connection: local
+
+  vars:
+    cli:
+      username: NewAmAdmin
+      password: Plunder!16
+      optional_args: {'secret': Plunder!16 }
+
+  tasks:
+  - name: get interface counters 
+    napalm_get_facts:
+       dev_os: 'ios'
+       provider: "{{ cli }}"
+       filter: 'interfaces_counters'
+    register: result
+
+  - name: copy output
+    copy: content="{{ result |to_nice_json  }}" dest="counters.json"
+
+  - name: add timestamp to json
+    shell: sed -i -e "s/ansible_facts/$(date +%s)/g" counters.json
+    delegate_to: localhost
+
+  - name: rename file
+    shell: mv counters.json couters$(date +%s).json
+    delegate_to: localhost

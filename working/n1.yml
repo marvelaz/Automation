@@ -1,0 +1,21 @@
+---
+- hosts: iosxe
+  gather_facts: no
+  connection: local
+
+  vars:
+    cli:
+      username: NewAmAdmin
+      password: Plunder!16
+      optional_args: {'secret': Plunder!16 }
+
+  tasks:
+  - name: get facts from device
+    napalm_get_facts:
+       dev_os: 'ios'
+       provider: "{{ cli }}"
+       filter: 'facts,interfaces,interfaces_ip,network_instances'
+    register: result
+
+  - name: copy output
+    copy: content="{{ result |to_nice_json  }}" dest="{{inventory_hostname}}.json"

@@ -1,0 +1,27 @@
+---
+- hosts: iosxe
+  gather_facts: no
+  connection: local
+
+  vars:
+    cli:
+      username: NewAmAdmin
+      password: Plunder!16
+      optional_args: {'secret': Plunder!16 }
+
+  tasks:
+  - name: generate timestamp
+    shell: date +%s 
+    register: tstamp
+    delegate_to: localhost
+ 
+  - name: get interface counters 
+    napalm_get_facts:
+       dev_os: 'ios'
+       provider: "{{ cli }}"
+       filter: 'interfaces_counters'
+    register: result
+
+  - name: copy output
+    copy: content="{{ result |to_nice_json  }}" dest="counters_{{ tstamp }}.json"
+
