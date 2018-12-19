@@ -5,9 +5,9 @@
 
   vars:
     cli:
-      username: NewAmAdmin
-      password: Plunder!16
-      optional_args: {'secret': Plunder!16 }
+      username: 
+      password: 
+      optional_args: {'secret':  }
 
   tasks:
   - name: get facts from device
